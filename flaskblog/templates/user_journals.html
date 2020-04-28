@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1 class="mb-3"> Journal by {{ user.username }} </h1>
+
+
+    
+	{% for journal in journals.items %} <!-- for loop posts.items to link with pagination --->
+		
+       <article class="media content-section">
+        <img class="rounded-circle article-img" src="{{ url_for('static', filename='profilepic/' + journal.author.image_file) }}">
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="{{ url_for('users.user_journals', username=journal.author.username) }}">{{ journal.author.username }}</a>
+              <!-- display time in y/m/d using .strftime method formatting --->
+
+              <small class="text-muted">{{ journal.date_posted.strftime('%Y-%m-%d') }}</small>  
+            </div>
+            <h2><a class="article-title" href="{{ url_for('journals.journal', journal_id=journal.id) }}"> {{ journal.title }}</a></h2> <!-- homepage gonna display post title and its anchor tag  will be uURL for that post -->
+            <p class="article-content">{{ journal.content }}</p>
+          </div>
+        </article>
+    {% endfor %}
+     {% for page_num in journals.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %} <!-- pagination in order-->
+      {% if page_num %}
+        {% if journals.page == page_num %}
+          <a class="btn btn-info mb-4" href="{{ url_for('users.user_journals', username=user.username, page=page_num) }}">{{ page_num }}</a>
+        {% else %}
+          <a class="btn btn-outline-info mb-4" href="{{ url_for('users.user_journals', username=user.username, page=page_num) }}">{{ page_num }}</a>
+        {% endif %}
+      {% else %}
+        ...
+      {% endif %}
+    {% endfor %}
+{% endblock content %}

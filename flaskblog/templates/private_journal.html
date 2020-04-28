@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block content %}
+
+    <h1 class="mb-3"> Private Journal by {{ current_user.username }}  </h1>
+    {% if current_user.is_authenticated %}
+        <a class="nav-item nav-link" href="{{ url_for('posts.new_journal') }}">New Post</a>
+    {% else %}
+        <a class="nav-item nav-link" href="{{ url_for('users.login') }}">Login</a>
+        <a class="nav-item nav-link" href="{{ url_for('users.register') }}">Register</a>
+    {% endif %}
+
+    {% for journal in journals.items %} <!-- for loop posts.items to link with pagination --->
+
+        <article class="media content-section">
+            <img class="rounded-circle article-img"
+                 src="{{ url_for('static', filename='profilepic/' + journal.author.image_file) }}">
+            <div class="media-body">
+                <div class="article-metadata">
+                    <a class="mr-2"
+                       href="{{ url_for('users.user_journals', username=current_user.username) }}">{{ current_user.username }}</a>
+                    <!-- display time in y/m/d using .strftime method formatting --->
+
+                    <small class="text-muted">{{ journal.date_posted.strftime('%Y-%m-%d') }}</small>
+                </div>
+                <h2><a class="article-title"
+                       href="{{ url_for('posts.journal', journal_id=journal.id) }}"> {{ journal.title }}</a></h2>
+                <!-- homepage gonna display post title and its anchor tag  will be uURL for that post -->
+                <p class="article-content">{{ journal.content }}</p>
+                {% if journal.upload_file %}
+                    <p><a download href="{{ url_for('static', filename='files/' + journal.upload_file) }}">Download
+                        Attached File</a></p>
+                {% endif %}
+            </div>
+        </article>
+    {% endfor %}
+
+{% endblock content %}
